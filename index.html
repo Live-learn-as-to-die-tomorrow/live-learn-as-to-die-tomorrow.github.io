@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>情绪恢复笔记本</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #e5e7eb;
+      --text: #111827;
+      --sub: #6b7280;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #eef2ff 0%, #f7f8fc 35%, #f5f7fb 100%);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 22px 18px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(14px);
+      border-right: 1px solid var(--line);
+      overflow-y: auto;
+    }
+
+    .brand {
+      padding: 16px 16px 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #eef2ff 100%);
+      border: 1px solid #dbe4ff;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .brand h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .search {
+      width: 100%;
+      border: 1px solid #d8dce8;
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      margin: 8px 0 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: .18s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      color: white;
+      box-shadow: 0 10px 24px rgba(79, 70, 229, 0.22);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #374151;
+      border: 1px solid #d8dce8;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .tip-box {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .nav-title {
+      margin: 18px 10px 10px;
+      font-size: 12px;
+      color: var(--sub);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav a {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      transition: .18s ease;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #312e81;
+    }
+
+    .main {
+      padding: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #ffffff 0%, #eef2ff 100%);
+      border: 1px solid #dde5ff;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .hero h2 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 15px;
+      line-height: 1.85;
+      max-width: 900px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 18px 0 24px;
+    }
+
+    .quick-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .quick-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .quick-card p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .quick-card a {
+      display: inline-block;
+      margin-top: 12px;
+      color: #4f46e5;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .section {
+      --accent: #4f46e5;
+      --accent-soft: #eef2ff;
+      --accent-border: #c7d2fe;
+      --accent-deep: #312e81;
+      --kick-bg: #fff7ed;
+      --kick-border: #fed7aa;
+      --kick-text: #c2410c;
+      --rescue-bg: #ecfeff;
+      --rescue-border: #99f6e4;
+      --rescue-text: #0f766e;
+      scroll-margin-top: 24px;
+      background: var(--panel);
+      border: 2px solid var(--accent-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 72%, white));
+    }
+
+    .section.emergency { --accent:#2563eb; --accent-soft:#eff6ff; --accent-border:#bfdbfe; --accent-deep:#1d4ed8; --kick-bg:#eff6ff; --kick-border:#bfdbfe; --kick-text:#1d4ed8; --rescue-bg:#eff6ff; --rescue-border:#93c5fd; --rescue-text:#1d4ed8; }
+    .section.escape { --accent:#dc2626; --accent-soft:#fef2f2; --accent-border:#fecaca; --accent-deep:#b91c1c; --kick-bg:#fff1f2; --kick-border:#fecdd3; --kick-text:#be123c; --rescue-bg:#fef2f2; --rescue-border:#fca5a5; --rescue-text:#b91c1c; }
+    .section.anxiety { --accent:#ea580c; --accent-soft:#fff7ed; --accent-border:#fdba74; --accent-deep:#c2410c; --kick-bg:#fff7ed; --kick-border:#fdba74; --kick-text:#c2410c; --rescue-bg:#fff7ed; --rescue-border:#fdba74; --rescue-text:#c2410c; }
+    .section.perfection { --accent:#7c3aed; --accent-soft:#f5f3ff; --accent-border:#ddd6fe; --accent-deep:#6d28d9; --kick-bg:#f5f3ff; --kick-border:#c4b5fd; --kick-text:#6d28d9; --rescue-bg:#f5f3ff; --rescue-border:#c4b5fd; --rescue-text:#6d28d9; }
+    .section.empty { --accent:#0891b2; --accent-soft:#ecfeff; --accent-border:#a5f3fc; --accent-deep:#0e7490; --kick-bg:#ecfeff; --kick-border:#67e8f9; --kick-text:#0e7490; --rescue-bg:#ecfeff; --rescue-border:#67e8f9; --rescue-text:#0e7490; }
+    .section.love { --accent:#db2777; --accent-soft:#fdf2f8; --accent-border:#fbcfe8; --accent-deep:#be185d; --kick-bg:#fdf2f8; --kick-border:#f9a8d4; --kick-text:#be185d; --rescue-bg:#fdf2f8; --rescue-border:#f9a8d4; --rescue-text:#be185d; }
+    .section.value { --accent:#16a34a; --accent-soft:#f0fdf4; --accent-border:#bbf7d0; --accent-deep:#15803d; --kick-bg:#f0fdf4; --kick-border:#86efac; --kick-text:#15803d; --rescue-bg:#f0fdf4; --rescue-border:#86efac; --rescue-text:#15803d; }
+    .section.compensate { --accent:#e11d48; --accent-soft:#fff1f2; --accent-border:#fecdd3; --accent-deep:#be123c; --kick-bg:#fff1f2; --kick-border:#fda4af; --kick-text:#be123c; --rescue-bg:#fff1f2; --rescue-border:#fda4af; --rescue-text:#be123c; }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.3;
+    }
+
+    .section .sub {
+      margin: 10px 0 0;
+      color: var(--sub);
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      border: 1px solid var(--accent-border);
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      border: 1px solid var(--accent-border);
+    }
+
+    .block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .block {
+      border: 1px solid var(--line);
+      background: #fcfcff;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .block h3, .kick h3, .rescue h3, .growth h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .block ul, .block ol, .kick ul, .growth ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.9;
+      font-size: 15px;
+    }
+
+    .kick {
+      margin-top: 18px;
+      border: 1px solid var(--kick-border);
+      background: var(--kick-bg);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .kick h3 { color: var(--kick-text); }
+
+    .growth {
+      margin-top: 18px;
+      border: 1px solid #86efac;
+      background: #f0fdf4;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .growth h3 { color: #15803d; }
+
+    .rescue {
+      margin-top: 18px;
+      border: 1px solid var(--rescue-border);
+      background: var(--rescue-bg);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .rescue h3 { color: var(--rescue-text); }
+    .rescue strong {
+      display: block;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .editable {
+      outline: none;
+      transition: background .15s ease, box-shadow .15s ease;
+      border-radius: 10px;
+    }
+
+    .edit-mode .editable:hover {
+      background: rgba(250, 204, 21, 0.08);
+      box-shadow: inset 0 0 0 2px rgba(250, 204, 21, 0.45);
+    }
+
+    .edit-mode .editable[contenteditable="true"]:focus {
+      background: rgba(250, 204, 21, 0.12);
+      box-shadow: inset 0 0 0 2px rgba(245, 158, 11, 0.7);
+    }
+
+    .status {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: rgba(17, 24, 39, 0.92);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: .22s ease;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .status.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer-note {
+      margin: 24px 0 4px;
+      color: var(--sub);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .hide { display: none !important; }
+
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .main { padding: 18px; }
+    }
+
+    @media (max-width: 760px) {
+      .grid, .block-grid { grid-template-columns: 1fr; }
+      .hero h2 { font-size: 28px; }
+      .section { padding: 18px; }
+      .section-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>情绪恢复笔记本</h1>
+        <p>以后你每天把状态发给我，我来继续帮你整理。你也可以自己直接点开任何一块内容修改，并保存到当前浏览器。</p>
+      </div>
+
+      <input id="searchInput" class="search" type="text" placeholder="搜索：焦虑 / 拖延 / 缺爱 / 富豪 / 看片" />
+
+      <div class="toolbar">
+        <button class="btn btn-primary" id="toggleEditBtn">开启编辑模式</button>
+        <button class="btn btn-secondary" id="saveBtn">保存到本浏览器</button>
+        <button class="btn btn-secondary" id="resetBtn">恢复默认内容</button>
+      </div>
+
+      <div class="tip-box">
+        这版支持你自己改：打开编辑模式后，直接点任何正文区域就能改。点“保存到本浏览器”后，下次在同一浏览器打开还会保留。你也可以继续发我，我来替你改。
+      </div>
+
+      <div class="nav-title">快速跳转</div>
+      <nav class="nav" id="navList">
+        <a href="#top">首页</a>
+        <a href="#emergency">紧急急救页</a>
+        <a href="#escape">行动瘫痪与逃避</a>
+        <a href="#anxiety">焦虑与失控</a>
+        <a href="#perfection">完美主义与过度思考</a>
+        <a href="#empty">空虚无力</a>
+        <a href="#love">缺爱与安全感不足</a>
+        <a href="#value">价值匮乏与高配补偿</a>
+        <a href="#compensate">匮乏补偿模式</a>
+      </nav>
+
+      <div class="footer-note">
+        真正跨设备同步，建议把这个 index.html 放到 GitHub Pages。这样你会得到一个固定网址，手机电脑平板都能访问；但“保存到本浏览器”的内容只保存在当前设备当前浏览器里。
+      </div>
+    </aside>
+
+    <main class="main" id="top">
+      <section class="hero searchable editable-region" data-key="hero">
+        <h2 class="editable">把它当成你的在线恢复手册</h2>
+        <p class="editable">你不用自己整理。以后你只要把“我现在出了什么问题”直接发给我，我来帮你把内容整理成对应条目。你失控、拖延、空虚、想看片、想打游戏、因为没钱自卑时，直接打开网页，点到相应部分看。</p>
+      </section>
+
+      <div class="grid">
+        <article class="quick-card searchable editable-region" data-key="quick1">
+          <h3 class="editable">我现在很乱，很想马上逃</h3>
+          <p class="editable">先看紧急急救页。不要先分析，不要先做决定，先把身体和注意力拉回来。</p>
+          <a href="#emergency">去急救页</a>
+        </article>
+        <article class="quick-card searchable editable-region" data-key="quick2">
+          <h3 class="editable">我知道要做什么，但就是不开始</h3>
+          <p class="editable">大概率不是懒，是启动门槛太高了。去看“行动瘫痪与逃避”。</p>
+          <a href="#escape">去对应部分</a>
+        </article>
+        <article class="quick-card searchable editable-region" data-key="quick3">
+          <h3 class="editable">我又开始嫌自己不值钱</h3>
+          <p class="editable">尤其是学生阶段、没赚钱、看富豪容易自卑时，直接看“价值匮乏与高配补偿”。</p>
+          <a href="#value">去对应部分</a>
+        </article>
+        <article class="quick-card searchable editable-region" data-key="quick4">
+          <h3 class="editable">我现在想靠刺激补自己</h3>
+          <p class="editable">想看片、想开挂、想刷高配内容时，先看“匮乏补偿模式”。</p>
+          <a href="#compensate">去对应部分</a>
+        </article>
+      </div>
+
+      <section id="emergency" class="section emergency searchable editable-region" data-key="emergency">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">紧急急救页</h2>
+            <p class="sub editable">当你已经开始上头、快失控、很想逃的时候，先看这里。</p>
+          </div>
+          <div class="section-actions">
+            <a class="mini-btn" href="#top">返回顶部</a>
+          </div>
+        </div>
+        <span class="tag editable">先稳住，不先评判</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>现在先做这 5 步</h3>
+            <ol>
+              <li>不做决定，不发冲动消息。</li>
+              <li>放下手机，双脚踩地，坐直一点。</li>
+              <li>喝水或洗脸。</li>
+              <li>做 10 次慢呼吸：吸气 4 秒，呼气 6 秒。</li>
+              <li>只做一个最小动作：收桌面 3 样东西 / 走 5 分钟 / 学 10 分钟。</li>
+            </ol>
+          </div>
+          <div class="block editable">
+            <h3>现在不要做什么</h3>
+            <ul>
+              <li>不要在情绪最高点做重大决定。</li>
+              <li>不要继续刷让你更上头的内容。</li>
+              <li>不要拿今天的状态定义整个人生。</li>
+            </ul>
+          </div>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>先把自己拉回身体里，这本身就是在恢复掌控。</li>
+            <li>今天先把目标降成“平稳度过这一阵”，不是马上解决全部。</li>
+            <li>你每稳住一次，都是在给未来的自己打基础。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>我现在是状态差，不是整个人差。今天先回到 60 分，就算过关。</strong>
+        </div>
+      </section>
+
+      <section id="escape" class="section escape searchable editable-region" data-key="escape">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">行动瘫痪与逃避</h2>
+            <p class="sub editable">明明知道该做什么，但总想拖一会儿、等状态、先玩一下，最后一天被带走。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">拖延 / 不自律 / 想逃任务</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你废了。</li>
+              <li>不代表你永远做不成事。</li>
+              <li>很多时候只是任务太大、太模糊、太难，或者你已经累了。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>只做 2 分钟启动版：打开文件 / 看题目 / 写标题。</li>
+              <li>再做 10 分钟及格版：不求做好，只求开始。</li>
+              <li>做完后再决定要不要继续，不要一开始就想把整件事扛完。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你不是不会做，你是不敢面对开始时那一点难受。</li>
+            <li>你以为你在等状态，其实是在把逃避越养越大。</li>
+            <li>你现在最怕的不是任务，你最怕的是一开始发现自己没有想象中那么强。</li>
+            <li>继续拖，不会让任务变小，只会让你更看不起自己。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>先完成一个 2 分钟动作，让自己重新感受到“我能启动”。</li>
+            <li>把今天目标改成“推进一点点”，而不是“一口气逆天改命”。</li>
+            <li>给自己留下一点现实证据：写 3 行、做 1 题、整理 1 个文件。</li>
+            <li>你现在真正要练的能力，不是逼自己狠，而是让自己能稳定开始。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>先做一点，胜过高配空想。</strong>
+        </div>
+      </section>
+
+      <section id="anxiety" class="section anxiety searchable editable-region" data-key="anxiety">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">焦虑与失控</h2>
+            <p class="sub editable">心慌、脑子乱、总想马上解决一切，越想越乱，甚至有点上头。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">心慌 / 脑乱 / 快失控</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表事情已经完了。</li>
+              <li>不代表你必须现在想明白。</li>
+              <li>不代表你现在的感觉就是全部事实。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>降刺激：关页面、远离争论、把诱发信息移开。</li>
+              <li>做 10 次慢呼吸，或者把注意力放到脚底、椅子、触感上。</li>
+              <li>只问一句：我接下来最小、最安全的一步是什么？</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你现在不是在解决问题，你是在被情绪推着乱冲。</li>
+            <li>情绪很大，不等于现实真的那么糟。</li>
+            <li>你越在最乱的时候分析，越会把自己分析进坑里。</li>
+            <li>先稳住身体，再谈判断。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>把今天的任务缩到一个最安全的小动作，先让自己恢复控制感。</li>
+            <li>对自己说一句更稳的话：我不需要现在解决全部，我只需要处理下一步。</li>
+            <li>把身体安顿下来，本身就是一种能力，不是浪费时间。</li>
+            <li>你正在练的是“乱的时候也能稳一点”，这会比硬撑更强。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>先稳住，再处理。</strong>
+        </div>
+      </section>
+
+      <section id="perfection" class="section perfection searchable editable-region" data-key="perfection">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">完美主义与过度思考</h2>
+            <p class="sub editable">想太多、标准太高、总想做得漂亮，于是迟迟不开始，或者开始了也不停自我评判。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">想太多 / 不敢开始 / 自我审判</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你要求高就是错的。</li>
+              <li>不代表你做得一般，你这个人就一般。</li>
+              <li>很多时候只是你把表现和自我价值绑在了一起。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>先问目标：这件事现在是要完成、推进，还是冲顶？</li>
+              <li>设三档：及格版 / 标准版 / 加强版。</li>
+              <li>先交第一版，再谈优化。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你不是在认真，你是在拿高标准困住自己。</li>
+            <li>你不是怕做不好，你是怕做出来以后证明自己没那么强。</li>
+            <li>第一版都交不出来，谈什么优秀。</li>
+            <li>你要的是结果，不是自我折磨。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>允许自己先交出一个不完美版本，这就是很强的现实能力。</li>
+            <li>今天练“够用就先过”，不是降低你的人生标准，而是在保护你的节奏。</li>
+            <li>把“我要做到最好”改成“我要先把它做出来”。</li>
+            <li>你正在学习的，不只是做事，而是学会不靠鞭子也能前进。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>先有效，再优秀。</strong>
+        </div>
+      </section>
+
+      <section id="empty" class="section empty searchable editable-region" data-key="empty">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">空虚无力</h2>
+            <p class="sub editable">什么都不想做，提不起劲，觉得空、没意思、没电，甚至连恢复都懒得恢复。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">没电 / 没劲 / 空掉了</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你废了。</li>
+              <li>不代表你永远都起不来了。</li>
+              <li>很多时候只是你没电了，而不是没价值了。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>补身体：喝水 / 洗脸 / 换衣服 / 走 5 分钟。</li>
+              <li>只做一个最低配动作：收 3 样东西 / 躺 10 分钟 / 学 5-10 分钟。</li>
+              <li>今天只要求回到 60 分，不要求优秀。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你现在是没电，不是没价值。</li>
+            <li>别在最空的时候给自己下结论。</li>
+            <li>你现在不是要想通人生，你现在是要回血。</li>
+            <li>继续躺着自责，不叫恢复，叫二次伤害。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>把今天定义成“恢复日”也可以，这不是输，是在充电。</li>
+            <li>去做一个最温和的动作：喝水、换衣服、晒太阳、走到窗边。</li>
+            <li>只要你开始补能量，你就已经在往回走。</li>
+            <li>你现在真正的努力方向，不是猛冲，而是慢慢把自己接回来。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>我现在是空，不是废。</strong>
+        </div>
+      </section>
+
+      <section id="love" class="section love searchable editable-region" data-key="love">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">缺爱与安全感不足</h2>
+            <p class="sub editable">特别想被理解、被确定、被偏爱，一点冷淡就难受，内心总有一种空落和不安。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">没安全感 / 想被确定 / 缺爱</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你矫情。</li>
+              <li>不代表你不值得被爱。</li>
+              <li>只是说明你对稳定感、连接感、被看见的需求很强。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>先照顾身体：抱枕头、盖被子、洗澡、慢走。</li>
+              <li>说清楚你现在缺的是：陪伴、安慰、还是现实帮助。</li>
+              <li>写下 3 个事实：我现在在哪里、我此刻是安全的、我今天要做什么。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你不是不值得被爱，你是太想马上被确认，所以一点摇晃都扛不住。</li>
+            <li>别人一时的冷淡，不等于你整个人不被爱。</li>
+            <li>你现在最缺的，不是对方立刻回应，而是你自己内心的稳定感。</li>
+            <li>不要总拿外界的态度，决定自己今天值不值得存在。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>先给自己一点稳定感：抱枕头、盖被子、给自己倒杯热水。</li>
+            <li>把“我想被爱”翻译成更具体的需求：我想被安慰、被理解、被陪一下。</li>
+            <li>你可以一边需要爱，一边练习让自己不完全靠外界决定情绪。</li>
+            <li>你真正要长出来的，是一种：就算暂时没人回应，我也能先稳住自己一点。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>我需要爱，不等于我没价值。</strong>
+        </div>
+      </section>
+
+      <section id="value" class="section value searchable editable-region" data-key="value">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">价值匮乏与高配补偿</h2>
+            <p class="sub editable">因为自己还是学生、暂时赚不到钱，就容易觉得自己没什么价值，不敢花钱，喜欢看顶级富豪和高配人生，越看越自卑。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">学生阶段 / 没钱自卑 / 看富豪补偿</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你真的不值钱。</li>
+              <li>不代表学生阶段没有价值。</li>
+              <li>很多时候只是你太早拿变现能力给自己判刑了。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>把“我没钱所以没价值”改写成“我现在产出低，但我在积累未来价值”。</li>
+              <li>今天做一件能留下证据的小事：学 1 小时、做 1 个小作品、完成 1 段输出。</li>
+              <li>少看高配幻想，多制造现实中的“我也在变强”的证据。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你不是没价值，你只是还在积累期。</li>
+            <li>别再拿别人的兑现期，羞辱自己的积累期。</li>
+            <li>你现在看富豪，不是在成长，你是在借他们的光止自己的痛。</li>
+            <li>你缺的不是顶级生活画面，你缺的是现实里的进步证据。</li>
+            <li>口袋里暂时没钱，不等于生命里没有潜力。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>今天去制造一点证据：学一小时、输出一段、做一个小作品。</li>
+            <li>把注意力从“我还没有什么”转到“我正在长出什么”。</li>
+            <li>学生阶段最重要的不是证明自己已经值钱，而是练成以后能值钱的人。</li>
+            <li>你真正要攒的，不只是钱，还有能力、作品、节奏和自信。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>我现在是积累期，不是废物期。</strong>
+        </div>
+      </section>
+
+      <section id="compensate" class="section compensate searchable editable-region" data-key="compensate">
+        <div class="section-header">
+          <div>
+            <h2 class="editable">匮乏补偿模式</h2>
+            <p class="sub editable">想看片、想开挂、想靠高刺激、高配画面、捷径和碾压感来逃离自己的空、弱、慢、普通。</p>
+          </div>
+          <div class="section-actions"><a class="mini-btn" href="#top">返回顶部</a></div>
+        </div>
+        <span class="tag editable">看片 / 开挂 / 高刺激补偿</span>
+        <div class="block-grid">
+          <div class="block editable">
+            <h3>这不代表什么</h3>
+            <ul>
+              <li>不代表你天生堕落。</li>
+              <li>不代表你没有救。</li>
+              <li>很多时候只是匮乏感在借高刺激找补。</li>
+            </ul>
+          </div>
+          <div class="block editable">
+            <h3>现在最有效的 3 步</h3>
+            <ol>
+              <li>停 30 秒，问自己：我现在真正缺的是什么？</li>
+              <li>说出来：我现在不是缺这个刺激，我是缺力量感 / 掌控感 / 被肯定。</li>
+              <li>先做一个现实补偿动作：收桌面 3 样东西 / 做 10 个深蹲 / 学 10 分钟 / 出门走 5 分钟。</li>
+            </ol>
+          </div>
+        </div>
+        <div class="kick editable">
+          <h3>给你的当头棒喝</h3>
+          <ul>
+            <li>你现在不是想快乐，你是在逃避空和弱。</li>
+            <li>你不是沉迷内容，你是沉迷“我终于不是现在这个自己了”的错觉。</li>
+            <li>外挂不能让你变强，它只是让你暂时不用面对弱。</li>
+            <li>色情不能给你丰盛，它只是借给你几分钟“我好像很有”的幻觉。</li>
+            <li>你越靠幻觉补自己，真实的自己就越空。</li>
+            <li>你老想跳过过程，最后会越来越怕过程。</li>
+          </ul>
+        </div>
+        <div class="growth editable">
+          <h3>现在可以正向做什么</h3>
+          <ul>
+            <li>先识别真实缺口：你现在缺的是力量感、掌控感、被肯定，还是成就感。</li>
+            <li>给自己一个现实里的补偿动作：运动 2 分钟、学 10 分钟、整理桌面、写一小段。</li>
+            <li>你真正要建立的，不是更猛的刺激，而是“我不用靠幻觉也能慢慢变强”的体验。</li>
+            <li>每次你没有立刻扑向刺激，而是先做一个现实动作，你都在给自己加厚一点。</li>
+          </ul>
+        </div>
+        <div class="rescue editable">
+          <h3>一句话速救</h3>
+          <strong>我现在想要的不是刺激，我想要的是不再匮乏的感觉。</strong>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="status" id="statusToast">已保存到当前浏览器</div>
+
+  <script>
+    const app = document.getElementById('app');
+    const searchInput = document.getElementById('searchInput');
+    const searchable = [...document.querySelectorAll('.searchable, .section, .quick-card')];
+    const navLinks = [...document.querySelectorAll('.nav a')];
+    const toggleEditBtn = document.getElementById('toggleEditBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const toast = document.getElementById('statusToast');
+    const storageKey = 'emotion-recovery-notebook-v2';
+    const editables = [...document.querySelectorAll('.editable')];
+    let editMode = false;
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function setEditMode(on) {
+      editMode = on;
+      app.classList.toggle('edit-mode', on);
+      editables.forEach(el => el.setAttribute('contenteditable', on ? 'true' : 'false'));
+      toggleEditBtn.textContent = on ? '关闭编辑模式' : '开启编辑模式';
+      toggleEditBtn.classList.toggle('btn-secondary', on);
+      toggleEditBtn.classList.toggle('btn-primary', !on);
+      if (on) showToast('已开启编辑模式');
+    }
+
+    function getState() {
+      return editables.map((el, i) => ({ i, html: el.innerHTML }));
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(getState()));
+      showToast('已保存到当前浏览器');
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      try {
+        const state = JSON.parse(raw);
+        state.forEach(item => {
+          if (editables[item.i]) editables[item.i].innerHTML = item.html;
+        });
+      } catch (e) {}
+    }
+
+    function resetState() {
+      localStorage.removeItem(storageKey);
+      location.reload();
+    }
+
+    toggleEditBtn.addEventListener('click', () => setEditMode(!editMode));
+    saveBtn.addEventListener('click', saveState);
+    resetBtn.addEventListener('click', resetState);
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      searchable.forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.classList.toggle('hide', q && !text.includes(q));
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+        });
+      });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach(section => observer.observe(section));
+    loadState();
+  </script>
+</body>
+</html>

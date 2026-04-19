@@ -1,0 +1,26 @@
+# GitHub Pages 发布说明
+
+1. 新建一个 GitHub 仓库。
+2. 把这个文件改名或保持为 `index.html`，上传到仓库根目录。
+3. 打开仓库 Settings -> Pages。
+4. 在 Build and deployment 里，Source 选择 `Deploy from a branch`。
+5. Branch 选择 `main`，Folder 选择 `/ (root)`，点 Save。
+6. 等几十秒到几分钟，网址会显示在 Pages 页面。
+
+如果你想要根域名形式的网址：
+- 仓库名建成 `你的GitHub用户名.github.io`
+- 然后把 `index.html` 放进去
+- 最后网址通常会是 `https://你的GitHub用户名.github.io/`
+
+如果是普通仓库：
+- 网址通常会是 `https://你的GitHub用户名.github.io/仓库名/`
+
+这份网页支持：
+- 搜索
+- 左侧导航
+- 开启编辑模式
+- 保存到当前浏览器（仅当前设备当前浏览器）
+
+跨设备同步修改：
+- 直接改仓库里的 `index.html` 再提交
+- 或者把你想新增的内容发给 ChatGPT，让我继续帮你改这份 HTML
